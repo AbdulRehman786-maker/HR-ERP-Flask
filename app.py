@@ -10,6 +10,11 @@ from db import get_db_connection
 app = Flask(__name__)
 app.config.from_object(Config)
 
+@app.route("/")
+def home():
+    return redirect(url_for("login"))
+
+
 # ---------- Decorators for Access Control ----------
 def login_required(f):
     @wraps(f)
