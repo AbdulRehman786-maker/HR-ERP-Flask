@@ -148,21 +148,34 @@ def logout():
 def admin_dashboard():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT count(emp_id) AS total_employees FROM employees")
-    total_employees = cursor.fetchone()['total_employees']
-    
-    cursor.execute("SELECT COUNT(emp_id) AS PresentEmployees from attendance where status = 'present' AND attendance_date = CURRENT_DATE")
-    PresentEmployees = cursor.fetchone()['PresentEmployees']
-    
-    cursor.execute("SELECT COUNT(emp_id) as UnPaidEmplyees from salaries where paid_status = 'unpaid'")
-    UnPaidEmplyees = cursor.fetchone()['UnPaidEmplyees']
-    
+
+    cursor.execute("SELECT COUNT(emp_id) AS total_employees FROM employees")
+    total_employees = cursor.fetchone().get("total_employees", 0)
+
+    cursor.execute("""
+        SELECT COUNT(emp_id) AS present_employees
+        FROM attendance
+        WHERE LOWER(status) = 'present' AND attendance_date = CURRENT_DATE
+    """)
+    present_employees = cursor.fetchone().get("present_employees", 0)
+
+    cursor.execute("""
+        SELECT COUNT(emp_id) AS unpaid_employees
+        FROM salaries
+        WHERE LOWER(paid_status) = 'unpaid'
+    """)
+    unpaid_employees = cursor.fetchone().get("unpaid_employees", 0)
+
     cursor.close()
     conn.close()
-    return render_template("admin/dashboard.html", 
-                          total_employees=total_employees,
-                          UnPaidEmplyees=UnPaidEmplyees, 
-                          PresentEmployees=PresentEmployees)
+
+    return render_template(
+        "admin/dashboard.html",
+        total_employees=total_employees,
+        UnPaidEmplyees=unpaid_employees,
+        PresentEmployees=present_employees
+    )
+
 
 @app.route("/admin/employees")
 @login_required
