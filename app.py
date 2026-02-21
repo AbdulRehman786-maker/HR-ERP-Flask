@@ -320,6 +320,17 @@ def admin_employee_delete(employee_id):
 def admin_attendance():
     conn = get_db_connection()
     cursor = conn.cursor()
+    engine = (Config.DB_ENGINE or "mysql").lower()
+    time_expr = (
+        "COALESCE(TO_CHAR(a.check_in, 'HH24:MI'), '--:--')"
+        if engine.startswith("post")
+        else "COALESCE(TIME_FORMAT(a.check_in, '%%H:%%i'), '--:--')"
+    )
+    time_expr_out = (
+        "COALESCE(TO_CHAR(a.check_out, 'HH24:MI'), '--:--')"
+        if engine.startswith("post")
+        else "COALESCE(TIME_FORMAT(a.check_out, '%%H:%%i'), '--:--')"
+    )
 
     attendance_date = request.args.get("date", "").strip()
     emp_id_raw = request.args.get("emp_id", "").strip()
@@ -342,13 +353,13 @@ def admin_attendance():
         month_end = date(year, month, last_day).isoformat()
 
         # Get attendance for the month
-        query = """
+        query = f"""
             SELECT
                 a.attendance_date AS date,
                 a.emp_id AS emp_id,
                 CONCAT(e.first_name, ' ', e.last_name) AS full_name,
-                COALESCE(a.check_in, '--:--') AS check_in,
-                COALESCE(a.check_out, '--:--') AS check_out,
+                {time_expr} AS check_in,
+                {time_expr_out} AS check_out,
                 UPPER(a.status) AS status
             FROM attendance a
             JOIN employees e ON a.emp_id = e.emp_id
@@ -388,13 +399,13 @@ def admin_attendance():
         )
     else:
         # Get attendance for all employees on specific date
-        query = """
+        query = f"""
             SELECT
                 a.attendance_date AS date,
                 e.emp_id AS emp_id,
                 CONCAT(e.first_name, ' ', e.last_name) AS full_name,
-                COALESCE(a.check_in, '--:--') AS check_in,
-                COALESCE(a.check_out, '--:--') AS check_out,
+                {time_expr} AS check_in,
+                {time_expr_out} AS check_out,
                 UPPER(a.status) AS status
             FROM attendance a
             JOIN employees e ON a.emp_id = e.emp_id
