@@ -619,7 +619,7 @@ def staff_dashboard():
 
     cursor.execute("""
         SELECT u.username, u.role AS user_role,
-               e.first_name, e.last_name, e.department, e.email
+               e.emp_id, e.first_name, e.last_name, e.department, e.email
         FROM users u
         JOIN employees e ON u.emp_id = e.emp_id
         WHERE u.emp_id = %s
