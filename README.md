@@ -178,6 +178,7 @@ Then open your browser at: `http://127.0.0.1:5000`
 - Updated staff profile card and username styling for a more professional UI.
 - Logo is now loaded from `static/` and favicon set is configured in the base template.
 - `.env` loader added in `config.py` to support local environment variables.
+- Navbar behavior adjusted to scroll naturally with the page (no sticky/fixed lock).
 
 ## Future Improvements
 - Add CSV export for salary and attendance
