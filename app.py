@@ -208,7 +208,7 @@ def admin_employees():
             params.append(f"%{q}%")
 
     if department:
-        base_query += " AND department = %s"
+        base_query += " AND LOWER(department) = LOWER(%s)"
         params.append(department)
 
     # Get total count
@@ -223,6 +223,10 @@ def admin_employees():
         tuple(params + [limit, offset])
     )
     employees = cursor.fetchall()
+
+    cursor.execute("SELECT DISTINCT department FROM employees WHERE department IS NOT NULL ORDER BY department ASC")
+    departments = [row["department"] for row in cursor.fetchall() if row.get("department")]
+
     cursor.close()
     conn.close()
 
@@ -241,7 +245,8 @@ def admin_employees():
         page_range=page_range,
         q=q,
         department=department,
-        sort=sort
+        sort=sort,
+        departments=departments,
     )
 
 @app.route("/admin/employees/new", methods=["GET", "POST"])
