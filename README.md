@@ -120,7 +120,7 @@ mysql -u root -p mini_erp < mineerp.sql
 3. Import schema manually if needed (convert or use equivalent SQL).
 
 ### Bulk Import from SQL Files
-If you keep data files in `C:\Users\khan\Desktop\data` as:
+If you keep data files in your Desktop `data` folder (example: `%USERPROFILE%\Desktop\data`) as:
 - `employees.sql`
 - `attendance.sql`
 - `salaries.sql`
@@ -129,6 +129,12 @@ Use this command to import all data to Render PostgreSQL and create login users:
 
 ```powershell
 python import_render_data.py --db-url "<RENDER_EXTERNAL_DATABASE_URL>"
+```
+
+If your data folder is different, pass it explicitly:
+
+```powershell
+python import_render_data.py --db-url "<RENDER_EXTERNAL_DATABASE_URL>" --data-dir "D:\my-data-folder"
 ```
 
 This importer also creates:
@@ -142,28 +148,11 @@ python app.py
 ```
 Then open your browser at: `http://127.0.0.1:5000`
 
-## Deployment (Render)
-1. Push code to GitHub.
-2. Create a new **Web Service** on Render.
-3. Set build command:
-   - `pip install -r requirements.txt`
-4. Set start command:
-   - `gunicorn app:app`
-5. Add environment variables in Render:
-   - `DB_ENGINE=postgres`
-   - `DATABASE_URL=<Render-provided>`
-   - `DB_SSLMODE=require`
-   - `SECRET_KEY=<strong-secret>`
-6. Deploy.
+## Live Demo (No Installation)
+Open directly in browser:
+- `https://hr-erp-flask.onrender.com/login`
 
-## Authentication & Roles
-- Session-based authentication
-- Passwords hashed using Werkzeug
-- Roles:
-  - **Admin**: full access to dashboards and management modules
-  - **Staff**: personal dashboard and attendance view
-
-## Demo Credentials (Local Testing Only)
+## Test Credentials
 **Admin Login**
 - username: admin
 - password: admin123
@@ -172,7 +161,7 @@ Then open your browser at: `http://127.0.0.1:5000`
 - username: employee
 - password: employee123
 
-> Security Note: Change demo credentials before deploying to production.
+> Security Note: Change these credentials for real production use.
 
 ## Screenshots
 - Admin Dashboard  
