@@ -1,4 +1,5 @@
 import argparse
+import os
 from pathlib import Path
 import time
 
@@ -159,7 +160,7 @@ def run(db_url: str, data_dir: Path, sslmode: str = "require") -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--db-url", required=True, help="Render External Database URL")
-    parser.add_argument("--data-dir", default=r"C:\Users\khan\Desktop\data")
+    parser.add_argument("--data-dir", default=str(Path(os.environ.get("USERPROFILE", "~")) / "Desktop" / "data"))
     parser.add_argument("--sslmode", default="require")
     args = parser.parse_args()
 
