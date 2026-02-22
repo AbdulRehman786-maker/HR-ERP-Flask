@@ -23,7 +23,8 @@
     <!-- Header -->
     <header class="topbar">
         <div class="container">
-            <a class="brand" href="{{ url_for('admin_dashboard') }}">
+            <a class="brand"
+               href="{% if session.get('role') == 'staff' %}{{ url_for('staff_dashboard') }}{% elif session.get('role') == 'admin' %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('login') }}{% endif %}">
                 <img src="{{ url_for('static', filename='MiniERPLogo.png') }}" alt="Mini ERP" class="brand-logo">
             </a>
             <nav class="navbar">
