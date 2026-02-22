@@ -15,13 +15,16 @@ Open directly in browser:
 ## Test Credentials
 **Admin Login**
 - username: admin
-- password: set via `update_login_credentials.py`
+- password: Admin@2026#Safe
 
 **Staff Login**
 - username: employee
-- password: set via `update_login_credentials.py`
+- password: Employee@2026#Safe
 
-> Security Note: Never commit real passwords in README or source code.
+## Demo Reset Behavior
+- This project runs in demo-reset mode.
+- You can test full CRUD operations.
+- On app restart, data resets to the original seeded state automatically.
 
 ## Features
 - User authentication (login, register, logout)
