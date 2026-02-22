@@ -119,6 +119,22 @@ mysql -u root -p mini_erp < mineerp.sql
 2. Use the provided `DATABASE_URL`.
 3. Import schema manually if needed (convert or use equivalent SQL).
 
+### Bulk Import from SQL Files
+If you keep data files in `C:\Users\khan\Desktop\data` as:
+- `employees.sql`
+- `attendance.sql`
+- `salaries.sql`
+
+Use this command to import all data to Render PostgreSQL and create login users:
+
+```powershell
+python import_render_data.py --db-url "<RENDER_EXTERNAL_DATABASE_URL>"
+```
+
+This importer also creates:
+- `admin` / `admin123`
+- `employee` / `employee123`
+
 ## Usage
 ### Run locally (development)
 ```powershell
@@ -149,12 +165,12 @@ Then open your browser at: `http://127.0.0.1:5000`
 
 ## Demo Credentials (Local Testing Only)
 **Admin Login**
-- emp_id: 11
-- password: khanjee11
+- username: admin
+- password: admin123
 
 **Staff Login**
-- emp_id: 2
-- password: khanjee2
+- username: employee
+- password: employee123
 
 > Security Note: Change demo credentials before deploying to production.
 
