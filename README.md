@@ -15,13 +15,13 @@ Open directly in browser:
 ## Test Credentials
 **Admin Login**
 - username: admin
-- password: admin123
+- password: set via `update_login_credentials.py`
 
 **Staff Login**
 - username: employee
-- password: employee123
+- password: set via `update_login_credentials.py`
 
-> Security Note: Change these credentials for real production use.
+> Security Note: Never commit real passwords in README or source code.
 
 ## Features
 - User authentication (login, register, logout)
