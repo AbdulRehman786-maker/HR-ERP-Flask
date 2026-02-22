@@ -156,6 +156,11 @@ This importer also creates:
 - `admin` / `admin123`
 - `employee` / `employee123`
 
+### Update Login Passwords Quickly
+```powershell
+python update_login_credentials.py --db-url "<RENDER_EXTERNAL_DATABASE_URL>" --admin-pass "<NEW_ADMIN_PASSWORD>" --staff-pass "<NEW_EMPLOYEE_PASSWORD>"
+```
+
 ## Usage
 ### Run locally (development)
 ```powershell
