@@ -154,6 +154,12 @@ This importer also creates:
 - `admin` / `admin123`
 - `employee` / `employee123`
 
+### Included Datasets (In Repo)
+These SQL datasets are also included in this repository under:
+- `data/employees.sql`
+- `data/attendance.sql`
+- `data/salaries.sql`
+
 ### Update Login Passwords Quickly
 ```powershell
 python update_login_credentials.py --db-url "<RENDER_EXTERNAL_DATABASE_URL>" --admin-pass "<NEW_ADMIN_PASSWORD>" --staff-pass "<NEW_EMPLOYEE_PASSWORD>"
@@ -188,6 +194,11 @@ Then open your browser at: `http://127.0.0.1:5000`
 - Add password reset
 - Add email notifications
 - Improve UI/UX responsiveness
+
+## Contact
+For support, collaboration, or any project-related help:
+- Email: `sheikhghazi09@gmail.com`
+- WhatsApp: `+923212454880`
 
 ## License
 MIT
