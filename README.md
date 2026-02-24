@@ -21,11 +21,6 @@ Open directly in browser:
 - username: employee
 - password: Employee@2026#Safe
 
-## Demo Reset Behavior
-- This project runs in demo-reset mode.
-- You can test full CRUD operations.
-- On app restart, data resets to the original seeded state automatically.
-
 ## Features
 - User authentication (login, register, logout)
 - Role-based access control (Admin, Staff)
