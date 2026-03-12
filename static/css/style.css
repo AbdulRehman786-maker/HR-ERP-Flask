@@ -520,6 +520,10 @@ textarea {
   background: var(--color-surface);
 }
 
+input[type="hidden"][name="csrf_token"] {
+  display: none !important;
+}
+
 .form-input:focus,
 input:focus,
 select:focus,
