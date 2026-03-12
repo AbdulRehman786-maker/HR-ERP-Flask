@@ -10,7 +10,7 @@ It is designed to be easy to run locally while remaining production-ready with e
 
 ## Live Demo (No Installation)
 Open directly in browser:
-- <a href="https://hr-erp-flask.onrender.com/login" target="_blank" rel="noopener noreferrer"><strong>https://hr-erp-flask.onrender.com/login</strong></a>
+- **[https://hr-erp-flask.onrender.com/login](https://hr-erp-flask.onrender.com/login)**
 After opening the link, please wait 20-40 seconds for the app to load.
 
 ## Test Credentials
