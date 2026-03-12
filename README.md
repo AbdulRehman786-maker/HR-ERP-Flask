@@ -176,13 +176,15 @@ Then open your browser at: `http://127.0.0.1:5000`
 
 ## Screenshots
 - Admin Dashboard  
-  ![Admin Dashboard](static/AdminDashboard.PNG)
-- Staff Dashboard  
-  ![Staff Dashboard](static/StaffDashboard.PNG)
+  ![Admin Dashboard](static/images/AdminDashboard.PNG)
+- Employees  
+  ![Employees](static/images/Employees.PNG)
+- Attendance List  
+  ![Attendance List](static/images/AttendanceList.PNG)
 - Mark Attendance  
-  ![Mark Attendance](static/MarkAttendance.PNG)
+  ![Mark Attendance](static/images/MarkAttendance.PNG)
 - Salary  
-  ![Salary](static/Salary.PNG)
+  ![Salary](static/images/Salary.PNG)
 
 ## Recent Updates
 - Added active tab highlighting in the navbar for both admin and staff views.
