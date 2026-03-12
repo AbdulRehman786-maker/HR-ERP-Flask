@@ -68,8 +68,10 @@ def login():
             session["emp_id"] = user["emp_id"]
 
             if role == "admin":
+                flash("Login successful. Welcome back!", "success")
                 return redirect(url_for("admin_dashboard"))
             elif role == "staff":
+                flash("Login successful. Welcome back!", "success")
                 return redirect(url_for("staff_dashboard"))
             else:
                 flash("Invalid role. Contact administrator.", "warning")

@@ -22,13 +22,22 @@ document.addEventListener('DOMContentLoaded', function () {
   const deleteForms = document.querySelectorAll('form.delete-form, form[action*="/delete"]');
   deleteForms.forEach(function (form) {
     form.addEventListener('submit', function (e) {
+      if (form.dataset.confirmed === '1') {
+        return;
+      }
+      e.preventDefault();
+      e.stopImmediatePropagation();
       const message = form.classList.contains('delete-form')
         ? 'Are you sure you want to delete this employee?'
         : 'Are you sure you want to delete this record?';
 
-      if (!confirm(message)) {
-        e.preventDefault();
-        e.stopPropagation();
+      if (confirm(message)) {
+        form.dataset.confirmed = '1';
+        if (typeof form.requestSubmit === 'function') {
+          form.requestSubmit();
+        } else {
+          form.submit();
+        }
       }
     });
   });
@@ -49,6 +58,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     form.addEventListener('submit', function (event) {
+      if (event.defaultPrevented) {
+        return;
+      }
       if (!form.checkValidity()) {
         event.preventDefault();
         event.stopPropagation();

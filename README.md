@@ -16,11 +16,11 @@ After opening the link, please wait 20-40 seconds for the app to load.
 ## Test Credentials
 **Admin Login**
 - username: admin
-- password: Admin@2026#Safe
+- password: admin123
 
 **Staff Login**
 - username: employee
-- password: Employee@2026#Safe
+- password: employee123
 
 ## Features
 - User authentication (login, register, logout)
