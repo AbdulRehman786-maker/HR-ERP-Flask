@@ -30,14 +30,14 @@
 
     <div class="card">
         <div class="table-wrapper">
-        <table class="table js-sortable" data-client-paginate="false">
+        <table class="table">
             <thead>
                 <tr>
-                    <th><button type="button" class="sort-btn" data-sort="emp_id" data-type="number">EMP ID</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="name">Name</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="department">Department</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="role">Role</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="phone">Phone</button></th>
+                    <th>EMP ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Role</th>
+                    <th>Phone</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -54,6 +54,7 @@
                         <td class="action-buttons">
                             <a class="btn btn-secondary btn-small" href="{{ url_for('admin_employee_edit', employee_id=emp.emp_id) }}">Edit</a>
                             <form method="post" action="{{ url_for('admin_employee_delete', employee_id=emp.emp_id) }}" class="inline-form delete-form">
+                                {{ csrf_token() }}
                                 <button class="btn btn-danger btn-small" type="submit">Delete</button>
                             </form>
                         </td>

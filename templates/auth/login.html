@@ -10,6 +10,7 @@
         </div>
         
         <form method="post" action="{{ url_for('login') }}" class="auth-form">
+            {{ csrf_token() }}
             <div class="form-group">
                 <label for="username" class="form-label">Username</label>
                 <input id="username" name="username" type="text" 

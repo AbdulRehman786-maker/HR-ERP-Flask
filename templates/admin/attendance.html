@@ -22,6 +22,13 @@
                     placeholder="Employee ID (optional)" 
                     value="{{ emp_id or '' }}" class="filter-input">
             </div>
+
+            <div class="filter-item">
+                <label for="q">Employee Name</label>
+                <input type="text" name="q" id="q"
+                    placeholder="Search by name"
+                    value="{{ q or '' }}" class="filter-input">
+            </div>
             
             <div class="filter-item">
                 <button type="submit" class="btn btn-primary filter-btn">Filter</button>
@@ -53,19 +60,22 @@
 
     <!-- Attendance Table -->
     <div class="card">
-        <div class="table-tools">
-            <input type="search" class="table-search" placeholder="Search attendance..." aria-label="Search attendance" data-table-search="attendance-table">
-        </div>
         <div class="table-wrapper">
-        <table class="table js-sortable" id="attendance-table" data-client-paginate="true" data-page-size="10" data-empty-message="No attendance records found. Try adjusting your filters.">
+        <table class="table" id="attendance-table">
             <thead>
                 <tr>
-                    <th><button type="button" class="sort-btn" data-sort="date" data-type="date">Date</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="emp_id" data-type="number">Employee ID</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="name">Name</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="check_in">Check-in</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="check_out">Check-out</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="status">Status</button></th>
+                    {% set date_order = 'asc' if sort != 'date' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_attendance', date=attendance_date, emp_id=emp_id, q=q, sort='date', order=date_order, page=current_page) }}">Date{% if sort == 'date' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set emp_order = 'asc' if sort != 'emp_id' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_attendance', date=attendance_date, emp_id=emp_id, q=q, sort='emp_id', order=emp_order, page=current_page) }}">Employee ID{% if sort == 'emp_id' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set name_order = 'asc' if sort != 'name' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_attendance', date=attendance_date, emp_id=emp_id, q=q, sort='name', order=name_order, page=current_page) }}">Name{% if sort == 'name' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set in_order = 'asc' if sort != 'check_in' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_attendance', date=attendance_date, emp_id=emp_id, q=q, sort='check_in', order=in_order, page=current_page) }}">Check-in{% if sort == 'check_in' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set out_order = 'asc' if sort != 'check_out' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_attendance', date=attendance_date, emp_id=emp_id, q=q, sort='check_out', order=out_order, page=current_page) }}">Check-out{% if sort == 'check_out' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set status_order = 'asc' if sort != 'status' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_attendance', date=attendance_date, emp_id=emp_id, q=q, sort='status', order=status_order, page=current_page) }}">Status{% if sort == 'status' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
                 </tr>
             </thead>
             <tbody>
@@ -94,7 +104,39 @@
             </tbody>
         </table>
         </div>
-        <div class="pagination js-pagination" data-table="attendance-table"></div>
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if current_page > 1 %}
+                <a class="page-nav btn btn-secondary btn-small" href="{{ url_for('admin_attendance', page=current_page - 1, date=attendance_date, emp_id=emp_id, q=q, sort=sort, order=order) }}">&laquo; Prev</a>
+            {% endif %}
+
+            {% if page_range[0] > 1 %}
+                <a class="page-number btn btn-secondary btn-small" href="{{ url_for('admin_attendance', page=1, date=attendance_date, emp_id=emp_id, q=q, sort=sort, order=order) }}">1</a>
+                {% if page_range[0] > 2 %}
+                    <span class="page-dots">...</span>
+                {% endif %}
+            {% endif %}
+
+            {% for p in page_range %}
+                <a class="page-number btn btn-secondary btn-small {% if p == current_page %}active{% endif %}" href="{{ url_for('admin_attendance', page=p, date=attendance_date, emp_id=emp_id, q=q, sort=sort, order=order) }}">
+                    {{ p }}
+                </a>
+            {% endfor %}
+
+            {% if page_range[-1] < total_pages %}
+                {% if page_range[-1] < total_pages - 1 %}
+                    <span class="page-dots">...</span>
+                {% endif %}
+                <a class="page-number btn btn-secondary btn-small" href="{{ url_for('admin_attendance', page=total_pages, date=attendance_date, emp_id=emp_id, q=q, sort=sort, order=order) }}">
+                    {{ total_pages }}
+                </a>
+            {% endif %}
+
+            {% if current_page < total_pages %}
+                <a class="page-nav btn btn-secondary btn-small" href="{{ url_for('admin_attendance', page=current_page + 1, date=attendance_date, emp_id=emp_id, q=q, sort=sort, order=order) }}">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

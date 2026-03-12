@@ -2,3 +2,6 @@ flask
 gunicorn
 psycopg2-binary
 pymysql
+flask-wtf
+flask-limiter
+pytest

@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_wtf import CSRFProtect
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import os
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,6 +12,15 @@ from db import get_db_connection
 
 app = Flask(__name__)
 app.config.from_object(Config)
+app.config.setdefault("WTF_CSRF_TIME_LIMIT", None)
+csrf = CSRFProtect(app)
+limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"])
+
+
+def _page_range(current_page: int, total_pages: int, window: int = 2):
+    start_page = max(1, current_page - window)
+    end_page = min(total_pages, current_page + window)
+    return range(start_page, end_page + 1)
 
 @app.route("/")
 def home():
@@ -36,6 +48,7 @@ def admin_required(f):
 
 # ---------- Authentication Routes ----------
 @app.route("/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
 def login():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
@@ -83,6 +96,7 @@ def login():
     return render_template("auth/login.html")
 
 @app.route("/register", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
 def register():
     if request.method == "POST":
         emp_id = request.form.get("emp_id", "").strip()
@@ -341,6 +355,14 @@ def admin_attendance():
 
     attendance_date = request.args.get("date", "").strip()
     emp_id_raw = request.args.get("emp_id", "").strip()
+    q = request.args.get("q", "").strip()
+    sort = request.args.get("sort", "").strip().lower()
+    order = request.args.get("order", "desc").strip().lower()
+    page = request.args.get("page", 1, type=int)
+    if page < 1:
+        page = 1
+    limit = 10
+    offset = (page - 1) * limit
 
     if not attendance_date:
         attendance_date = date.today().isoformat()
@@ -360,6 +382,25 @@ def admin_attendance():
         month_end = date(year, month, last_day).isoformat()
 
         # Get attendance for the month
+        order_dir = "ASC" if order == "asc" else "DESC"
+        sort_map = {
+            "date": "a.attendance_date",
+            "status": "a.status",
+            "check_in": "a.check_in",
+            "check_out": "a.check_out",
+        }
+        sort_col = sort_map.get(sort, "a.attendance_date")
+
+        count_query = """
+            SELECT COUNT(*) AS total
+            FROM attendance a
+            WHERE a.emp_id = %s
+              AND DATE(a.attendance_date) BETWEEN %s AND %s
+        """
+        cursor.execute(count_query, (emp_id, month_start, month_end))
+        total_records = cursor.fetchone()["total"]
+        total_pages = (total_records + limit - 1) // limit
+
         query = f"""
             SELECT
                 a.attendance_date AS date,
@@ -372,9 +413,10 @@ def admin_attendance():
             JOIN employees e ON a.emp_id = e.emp_id
             WHERE a.emp_id = %s
               AND DATE(a.attendance_date) BETWEEN %s AND %s
-            ORDER BY a.attendance_date DESC
+            ORDER BY {sort_col} {order_dir}
+            LIMIT %s OFFSET %s
         """
-        cursor.execute(query, (emp_id, month_start, month_end))
+        cursor.execute(query, (emp_id, month_start, month_end, limit, offset))
         attendance = cursor.fetchall()
 
         # Get summary counts
@@ -398,6 +440,12 @@ def admin_attendance():
             mode="employee",
             attendance_date=attendance_date,
             emp_id=emp_id,
+            q=q,
+            sort=sort or "date",
+            order=order,
+            total_pages=total_pages,
+            current_page=page,
+            page_range=_page_range(page, total_pages),
             month_start=month_start,
             month_end=month_end,
             present_days=int(summary.get("present_days") or 0),
@@ -406,6 +454,40 @@ def admin_attendance():
         )
     else:
         # Get attendance for all employees on specific date
+        name_expr = (
+            "LOWER(CONCAT(e.first_name, ' ', e.last_name))"
+            if engine.startswith("post")
+            else "LOWER(CONCAT(e.first_name,' ',e.last_name))"
+        )
+        emp_expr = "CAST(e.emp_id AS TEXT)" if engine.startswith("post") else "CAST(e.emp_id AS CHAR)"
+
+        base_query = f"""
+            FROM attendance a
+            JOIN employees e ON a.emp_id = e.emp_id
+            WHERE DATE(a.attendance_date) = %s
+        """
+        params = [attendance_date]
+        if q:
+            base_query += f" AND ({name_expr} LIKE %s OR {emp_expr} LIKE %s)"
+            like_q = f"%{q.lower()}%"
+            params.extend([like_q, like_q])
+
+        order_dir = "ASC" if order == "asc" else "DESC"
+        sort_map = {
+            "date": "a.attendance_date",
+            "emp_id": "e.emp_id",
+            "name": "e.first_name",
+            "check_in": "a.check_in",
+            "check_out": "a.check_out",
+            "status": "a.status",
+        }
+        sort_col = sort_map.get(sort, "")
+        order_by = f" ORDER BY {sort_col} {order_dir}" if sort_col else " ORDER BY a.status ASC, a.check_in ASC"
+
+        cursor.execute(f"SELECT COUNT(*) AS total {base_query}", tuple(params))
+        total_records = cursor.fetchone()["total"]
+        total_pages = (total_records + limit - 1) // limit
+
         query = f"""
             SELECT
                 a.attendance_date AS date,
@@ -414,12 +496,11 @@ def admin_attendance():
                 {time_expr} AS check_in,
                 {time_expr_out} AS check_out,
                 UPPER(a.status) AS status
-            FROM attendance a
-            JOIN employees e ON a.emp_id = e.emp_id
-            WHERE DATE(a.attendance_date) = %s
-            ORDER BY a.status ASC, a.check_in ASC
+            {base_query}
+            {order_by}
+            LIMIT %s OFFSET %s
         """
-        cursor.execute(query, (attendance_date,))
+        cursor.execute(query, tuple(params + [limit, offset]))
         attendance = cursor.fetchall()
 
         # Get totals for the date
@@ -441,6 +522,12 @@ def admin_attendance():
             attendance=attendance,
             mode="date",
             attendance_date=attendance_date,
+            q=q,
+            sort=sort,
+            order=order,
+            total_pages=total_pages,
+            current_page=page,
+            page_range=_page_range(page, total_pages),
             present_count=int(totals.get("present_count") or 0),
             leave_count=int(totals.get("leave_count") or 0),
             absent_count=int(totals.get("absent_count") or 0)
@@ -452,9 +539,18 @@ def admin_attendance():
 def admin_salary():
     conn = get_db_connection()
     cursor = conn.cursor()
+    engine = (Config.DB_ENGINE or "mysql").lower()
 
     raw_month = request.args.get("month")
     emp_id_raw = request.args.get("emp_id", "").strip()
+    q = request.args.get("q", "").strip()
+    sort = request.args.get("sort", "").strip().lower()
+    order = request.args.get("order", "asc").strip().lower()
+    page = request.args.get("page", 1, type=int)
+    if page < 1:
+        page = 1
+    limit = 10
+    offset = (page - 1) * limit
 
     # Parse month input
     if raw_month:
@@ -472,7 +568,60 @@ def admin_salary():
     emp_id = int(emp_id_raw) if emp_id_raw.isdigit() else None
 
     # Build query (use created_at for month+year filter)
-    salary_query = """
+    base_query = """
+        FROM employees e
+        JOIN salaries s ON s.emp_id = e.emp_id
+        WHERE EXTRACT(YEAR FROM s.created_at) = %s
+          AND EXTRACT(MONTH FROM s.created_at) = %s
+    """
+    params = [year_val, month_val]
+
+    if emp_id:
+        base_query += " AND e.emp_id = %s"
+        params.append(emp_id)
+
+    if q:
+        name_expr = (
+            "LOWER(CONCAT(e.first_name, ' ', e.last_name))"
+            if engine.startswith("post")
+            else "LOWER(CONCAT(e.first_name,' ',e.last_name))"
+        )
+        emp_expr = "CAST(e.emp_id AS TEXT)" if engine.startswith("post") else "CAST(e.emp_id AS CHAR)"
+        base_query += f" AND ({name_expr} LIKE %s OR {emp_expr} LIKE %s)"
+        like_q = f"%{q.lower()}%"
+        params.extend([like_q, like_q])
+
+    sort_map = {
+        "emp_id": "e.emp_id",
+        "employee": "e.first_name",
+        "base": "s.base_salary",
+        "bonus": "s.bonus",
+        "deductions": "s.deductions",
+        "net": "(s.base_salary + s.bonus - s.deductions)",
+        "status": "s.paid_status",
+    }
+    order_dir = "DESC" if order == "desc" else "ASC"
+    sort_col = sort_map.get(sort, "e.emp_id")
+
+    # Total counts + aggregates
+    cursor.execute(
+        f"""
+        SELECT
+            COUNT(*) AS rows,
+            SUM(CASE WHEN s.paid_status = 'paid' THEN 1 ELSE 0 END) AS paid,
+            SUM(CASE WHEN s.paid_status != 'paid' THEN 1 ELSE 0 END) AS unpaid,
+            COALESCE(SUM(s.base_salary), 0) AS base,
+            COALESCE(SUM(s.bonus), 0) AS bonus,
+            COALESCE(SUM(s.deductions), 0) AS deductions
+        {base_query}
+        """,
+        tuple(params),
+    )
+    agg = cursor.fetchone()
+    total_records = int(agg.get("rows") or 0)
+    total_pages = (total_records + limit - 1) // limit
+
+    salary_query = f"""
         SELECT
             e.emp_id,
             COALESCE(e.first_name, '') AS first_name,
@@ -482,26 +631,28 @@ def admin_salary():
             COALESCE(s.deductions, 0) AS deductions,
             COALESCE(s.paid_status, 'unpaid') AS paid_status,
             s.created_at
-        FROM employees e
-        JOIN salaries s ON s.emp_id = e.emp_id
-        WHERE EXTRACT(YEAR FROM s.created_at) = %s
-          AND EXTRACT(MONTH FROM s.created_at) = %s
+        {base_query}
+        ORDER BY {sort_col} {order_dir}
+        LIMIT %s OFFSET %s
     """
-    params = [year_val, month_val]
 
-    if emp_id:
-        salary_query += " AND e.emp_id = %s"
-        params.append(emp_id)
-
-    salary_query += " ORDER BY e.emp_id ASC"
-
-    cursor.execute(salary_query, tuple(params))
+    cursor.execute(salary_query, tuple(params + [limit, offset]))
     rows = cursor.fetchall()
 
     # Process salary data
     salaries = []
-    totals = {"base": 0, "bonus": 0, "deductions": 0, "net": 0}
-    counts = {"paid": 0, "unpaid": 0, "rows": 0}
+    totals = {
+        "base": float(agg.get("base") or 0),
+        "bonus": float(agg.get("bonus") or 0),
+        "deductions": float(agg.get("deductions") or 0),
+        "net": 0,
+    }
+    totals["net"] = totals["base"] + totals["bonus"] - totals["deductions"]
+    counts = {
+        "paid": int(agg.get("paid") or 0),
+        "unpaid": int(agg.get("unpaid") or 0),
+        "rows": total_records,
+    }
 
     for r in rows:
         base_salary = float(r["base_salary"])
@@ -509,14 +660,6 @@ def admin_salary():
         deductions = float(r["deductions"])
         net = base_salary + bonus - deductions
         status = r["paid_status"]
-
-        counts["rows"] += 1
-        counts["paid" if status == "paid" else "unpaid"] += 1
-
-        totals["base"] += base_salary
-        totals["bonus"] += bonus
-        totals["deductions"] += deductions
-        totals["net"] += net
 
         salaries.append({
             "emp_id": r["emp_id"],
@@ -537,7 +680,13 @@ def admin_salary():
         totals=totals,
         counts=counts,
         month_display=month_input,
-        emp_id=emp_id
+        emp_id=emp_id,
+        q=q,
+        sort=sort,
+        order=order,
+        total_pages=total_pages,
+        current_page=page,
+        page_range=_page_range(page, total_pages)
     )
 
 

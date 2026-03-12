@@ -42,6 +42,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Flash message dismiss
+  const flashButtons = document.querySelectorAll('.flash-close');
+  flashButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const item = btn.closest('.flash-message');
+      if (item) {
+        item.remove();
+      }
+    });
+  });
+
   // Client-side validation feedback
   const forms = document.querySelectorAll('form');
   forms.forEach(function (form) {

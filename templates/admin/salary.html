@@ -21,6 +21,13 @@
                            placeholder="Enter Employee ID" 
                            value="{{ emp_id or '' }}">
                 </div>
+
+                <div class="form-row">
+                    <label for="q">Employee Name</label>
+                    <input type="text" id="q" name="q"
+                           placeholder="Search by name"
+                           value="{{ q or '' }}">
+                </div>
                 
                 <div class="form-row">
                     <button type="submit" class="btn btn-primary">Filter</button>
@@ -66,20 +73,24 @@
 
     <!-- Salary Table -->
     <div class="card">
-        <div class="table-tools">
-            <input type="search" class="table-search" placeholder="Search salary records..." aria-label="Search salary records" data-table-search="salary-table">
-        </div>
         <div class="table-wrapper">
-        <table class="table js-sortable" id="salary-table" data-client-paginate="true" data-page-size="10" data-empty-message="No salary data found. Update the filters or add records.">
+        <table class="table" id="salary-table">
             <thead>
                 <tr>
-                    <th><button type="button" class="sort-btn" data-sort="emp_id" data-type="number">EMP ID</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="employee">Employee</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="base" data-type="number">Base Salary</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="bonus" data-type="number">Bonus</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="deductions" data-type="number">Deductions</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="net" data-type="number">Net Pay</button></th>
-                    <th><button type="button" class="sort-btn" data-sort="status">Status</button></th>
+                    {% set emp_order = 'asc' if sort != 'emp_id' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_salary', page=current_page, month=request.args.get('month',''), emp_id=emp_id, q=q, sort='emp_id', order=emp_order) }}">EMP ID{% if sort == 'emp_id' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set name_order = 'asc' if sort != 'employee' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_salary', page=current_page, month=request.args.get('month',''), emp_id=emp_id, q=q, sort='employee', order=name_order) }}">Employee{% if sort == 'employee' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set base_order = 'asc' if sort != 'base' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_salary', page=current_page, month=request.args.get('month',''), emp_id=emp_id, q=q, sort='base', order=base_order) }}">Base Salary{% if sort == 'base' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set bonus_order = 'asc' if sort != 'bonus' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_salary', page=current_page, month=request.args.get('month',''), emp_id=emp_id, q=q, sort='bonus', order=bonus_order) }}">Bonus{% if sort == 'bonus' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set ded_order = 'asc' if sort != 'deductions' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_salary', page=current_page, month=request.args.get('month',''), emp_id=emp_id, q=q, sort='deductions', order=ded_order) }}">Deductions{% if sort == 'deductions' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set net_order = 'asc' if sort != 'net' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_salary', page=current_page, month=request.args.get('month',''), emp_id=emp_id, q=q, sort='net', order=net_order) }}">Net Pay{% if sort == 'net' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
+                    {% set status_order = 'asc' if sort != 'status' or order == 'desc' else 'desc' %}
+                    <th><a class="sort-link" href="{{ url_for('admin_salary', page=current_page, month=request.args.get('month',''), emp_id=emp_id, q=q, sort='status', order=status_order) }}">Status{% if sort == 'status' %} {{ '^' if order == 'asc' else 'v' }}{% endif %}</a></th>
                 </tr>
             </thead>
             <tbody>
@@ -107,7 +118,39 @@
             </tbody>
         </table>
         </div>
-        <div class="pagination js-pagination" data-table="salary-table"></div>
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if current_page > 1 %}
+                <a class="page-nav btn btn-secondary btn-small" href="{{ url_for('admin_salary', page=current_page - 1, month=request.args.get('month',''), emp_id=emp_id, q=q, sort=sort, order=order) }}">&laquo; Prev</a>
+            {% endif %}
+
+            {% if page_range[0] > 1 %}
+                <a class="page-number btn btn-secondary btn-small" href="{{ url_for('admin_salary', page=1, month=request.args.get('month',''), emp_id=emp_id, q=q, sort=sort, order=order) }}">1</a>
+                {% if page_range[0] > 2 %}
+                    <span class="page-dots">...</span>
+                {% endif %}
+            {% endif %}
+
+            {% for p in page_range %}
+                <a class="page-number btn btn-secondary btn-small {% if p == current_page %}active{% endif %}" href="{{ url_for('admin_salary', page=p, month=request.args.get('month',''), emp_id=emp_id, q=q, sort=sort, order=order) }}">
+                    {{ p }}
+                </a>
+            {% endfor %}
+
+            {% if page_range[-1] < total_pages %}
+                {% if page_range[-1] < total_pages - 1 %}
+                    <span class="page-dots">...</span>
+                {% endif %}
+                <a class="page-number btn btn-secondary btn-small" href="{{ url_for('admin_salary', page=total_pages, month=request.args.get('month',''), emp_id=emp_id, q=q, sort=sort, order=order) }}">
+                    {{ total_pages }}
+                </a>
+            {% endif %}
+
+            {% if current_page < total_pages %}
+                <a class="page-nav btn btn-secondary btn-small" href="{{ url_for('admin_salary', page=current_page + 1, month=request.args.get('month',''), emp_id=emp_id, q=q, sort=sort, order=order) }}">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

@@ -58,13 +58,14 @@
     <!-- Main Content -->
     <main class="container">
         <!-- Flash Messages -->
-        <div class="flash-container">
+        <div class="flash-container" role="status" aria-live="polite">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <ul class="flash-messages">
                         {% for category, message in messages %}
                             <li class="flash-message alert alert-{{ category }}">
-                                {{ message }}
+                                <span class="flash-text">{{ message }}</span>
+                                <button type="button" class="flash-close" aria-label="Dismiss notification">x</button>
                             </li>
                         {% endfor %}
                     </ul>

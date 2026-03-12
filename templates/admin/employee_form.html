@@ -6,6 +6,7 @@
     <h2>{% if employee %}Edit Employee{% else %}Add New Employee{% endif %}</h2>
     
     <form method="post" action="">
+        {{ csrf_token() }}
         <!-- Row 1: Name Fields - Side by Side -->
         <div class="form-two-columns">
             <div class="form-col">

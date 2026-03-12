@@ -7,6 +7,7 @@
     
     <div class="card">
         <form method="POST" class="attendance-form">
+            {{ csrf_token() }}
             <div class="form-row">
                 <label for="emp_id">Employee ID *</label>
                 <input id="emp_id" type="number" name="emp_id" 
