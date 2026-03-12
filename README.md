@@ -32,11 +32,15 @@ After opening the link, please wait 20-40 seconds for the app to load.
 - Salary management (monthly view, net calculation, paid/unpaid tracking)
 - Admin and Staff dashboards
 - Fully responsive UI (mobile, tablet, desktop)
+- Server-side pagination, filtering, and sorting for attendance and salary
+- CSRF protection and login rate limiting
 
 ## Tech Stack
 - Python (Flask)
 - MySQL (PyMySQL) / PostgreSQL (psycopg2)
 - Werkzeug (password hashing)
+- Flask-WTF (CSRF protection)
+- Flask-Limiter (rate limiting)
 - HTML/CSS (Jinja templates)
 
 ## Project Structure
@@ -174,6 +178,19 @@ python app.py
 ```
 Then open your browser at: `http://127.0.0.1:5000`
 
+### Run with Flask CLI (optional)
+```powershell
+$env:FLASK_APP="app.py"
+$env:FLASK_ENV="development"
+flask run
+```
+
+## Tests
+```powershell
+pip install -r requirements.txt
+pytest -q
+```
+
 ## Screenshots
 - Admin Dashboard  
   ![Admin Dashboard](static/images/AdminDashboard.PNG)
@@ -195,12 +212,13 @@ Then open your browser at: `http://127.0.0.1:5000`
 - `.env` loader added in `config.py` to support local environment variables.
 - Navbar behavior adjusted to scroll naturally with the page (no sticky/fixed lock).
 - UI now uses a responsive layout system and reusable components for consistent styling.
+- Added CSRF protection, login rate limiting, and server-side pagination for admin tables.
 
 ## Future Improvements
 - Add CSV export for salary and attendance
 - Add password reset
 - Add email notifications
-- Improve UI/UX responsiveness
+- Add audit log for admin actions
 
 ## Contact
 For support, collaboration, or any project-related help:
