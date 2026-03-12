@@ -11,7 +11,7 @@
         </div>
         
         <form method="post" class="auth-form">
-            {{ csrf_token() }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label for="emp_id" class="form-label">Employee ID *</label>
                 <input id="emp_id" name="emp_id" type="text" required

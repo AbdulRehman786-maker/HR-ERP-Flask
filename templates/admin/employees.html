@@ -54,7 +54,7 @@
                         <td class="action-buttons">
                             <a class="btn btn-secondary btn-small" href="{{ url_for('admin_employee_edit', employee_id=emp.emp_id) }}">Edit</a>
                             <form method="post" action="{{ url_for('admin_employee_delete', employee_id=emp.emp_id) }}" class="inline-form delete-form">
-                                {{ csrf_token() }}
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button class="btn btn-danger btn-small" type="submit">Delete</button>
                             </form>
                         </td>
