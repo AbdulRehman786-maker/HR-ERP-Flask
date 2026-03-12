@@ -36,14 +36,17 @@
     <div class="card">
         <h3>Recent Attendance</h3>
         
+        <div class="table-tools">
+            <input type="search" class="table-search" placeholder="Search attendance..." aria-label="Search attendance" data-table-search="staff-attendance-table">
+        </div>
         <div class="table-wrapper">
-        <table class="table">
+        <table class="table js-sortable" id="staff-attendance-table" data-client-paginate="true" data-page-size="8" data-empty-message="No attendance records found yet.">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Check-In</th>
-                    <th>Check-Out</th>
-                    <th>Status</th>
+                    <th><button type="button" class="sort-btn" data-sort="date" data-type="date">Date</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="check_in">Check-In</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="check_out">Check-Out</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="status">Status</button></th>
                 </tr>
             </thead>
             <tbody>
@@ -63,13 +66,14 @@
                 {% else %}
                     <tr>
                         <td colspan="4" class="no-data">
-                            No attendance records found
+                            No attendance records found yet.
                         </td>
                     </tr>
                 {% endif %}
             </tbody>
         </table>
         </div>
+        <div class="pagination js-pagination" data-table="staff-attendance-table"></div>
     </div>
 </section>
 {% endblock %}

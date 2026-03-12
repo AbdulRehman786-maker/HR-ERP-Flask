@@ -66,17 +66,20 @@
 
     <!-- Salary Table -->
     <div class="card">
+        <div class="table-tools">
+            <input type="search" class="table-search" placeholder="Search salary records..." aria-label="Search salary records" data-table-search="salary-table">
+        </div>
         <div class="table-wrapper">
-        <table class="table">
+        <table class="table js-sortable" id="salary-table" data-client-paginate="true" data-page-size="10" data-empty-message="No salary data found. Update the filters or add records.">
             <thead>
                 <tr>
-                    <th>EMP ID</th>
-                    <th>Employee</th>
-                    <th>Base Salary</th>
-                    <th>Bonus</th>
-                    <th>Deductions</th>
-                    <th>Net Pay</th>
-                    <th>Status</th>
+                    <th><button type="button" class="sort-btn" data-sort="emp_id" data-type="number">EMP ID</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="employee">Employee</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="base" data-type="number">Base Salary</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="bonus" data-type="number">Bonus</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="deductions" data-type="number">Deductions</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="net" data-type="number">Net Pay</button></th>
+                    <th><button type="button" class="sort-btn" data-sort="status">Status</button></th>
                 </tr>
             </thead>
             <tbody>
@@ -98,12 +101,13 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="7" class="no-data">No salary data found</td>
+                        <td colspan="7" class="no-data">No salary data found. Update the filters or add records.</td>
                     </tr>
                 {% endif %}
             </tbody>
         </table>
         </div>
+        <div class="pagination js-pagination" data-table="salary-table"></div>
     </div>
 </section>
 {% endblock %}
