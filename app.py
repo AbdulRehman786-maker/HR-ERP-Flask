@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory
 from flask_wtf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -27,6 +27,15 @@ def home():
     return redirect(url_for("login"))
 
 
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, "static", "erp-logo"),
+        "favicon.ico",
+        mimetype="image/vnd.microsoft.icon",
+    )
+
+
 # ---------- Decorators for Access Control ----------
 def login_required(f):
     @wraps(f)
@@ -49,6 +58,7 @@ def admin_required(f):
 # ---------- Authentication Routes ----------
 @app.route("/login", methods=["GET", "POST"])
 @limiter.limit("5 per minute")
+@csrf.exempt
 def login():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
@@ -97,6 +107,7 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 @limiter.limit("5 per minute")
+@csrf.exempt
 def register():
     if request.method == "POST":
         emp_id = request.form.get("emp_id", "").strip()
