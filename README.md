@@ -177,6 +177,8 @@ Then open your browser at: `http://127.0.0.1:5000`
 ## Screenshots
 - Admin Dashboard  
   ![Admin Dashboard](static/images/AdminDashboard.PNG)
+- Staff Dashboard  
+  ![Staff Dashboard](static/images/StaffDashboard.PNG)
 - Employees  
   ![Employees](static/images/Employees.PNG)
 - Attendance List  
