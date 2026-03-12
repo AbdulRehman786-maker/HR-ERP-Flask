@@ -35,7 +35,7 @@
     <div class="card summary">
         {% if mode == "employee" %}
             <h3>Attendance Summary - Employee ID: {{ emp_id }}</h3>
-            <p class="period">{{ month_start }} — {{ month_end }}</p>
+            <p class="period">{{ month_start }} - {{ month_end }}</p>
             <div class="summary-stats">
                 <span class="stat present">Present: <strong>{{ present_days }}</strong></span>
                 <span class="stat leave">Leave: <strong>{{ leave_days }}</strong></span>
@@ -53,6 +53,7 @@
 
     <!-- Attendance Table -->
     <div class="card">
+        <div class="table-wrapper">
         <table class="table">
             <thead>
                 <tr>
@@ -89,6 +90,7 @@
                 {% endif %}
             </tbody>
         </table>
+        </div>
     </div>
 </section>
 {% endblock %}

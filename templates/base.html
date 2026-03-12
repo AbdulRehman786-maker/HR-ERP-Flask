@@ -27,23 +27,28 @@
                href="{% if session.get('role') == 'staff' %}{{ url_for('staff_dashboard') }}{% elif session.get('role') == 'admin' %}{{ url_for('admin_dashboard') }}{% else %}{{ url_for('login') }}{% endif %}">
                 <img src="{{ url_for('static', filename='MiniERPLogo.png') }}" alt="Mini ERP" class="brand-logo">
             </a>
-            <nav class="navbar">
+            <nav class="navbar" data-nav>
                 {% if session.get("user_id") %}
-                    <div class="nav-buttons">
-                        {% if session.get("role") == "admin" %}
-                            <a href="{{ url_for('admin_dashboard') }}" class="nav-btn {% if request.path == url_for('admin_dashboard') %}active{% endif %}">Dashboard</a>
-                            <a href="{{ url_for('admin_employees') }}" class="nav-btn {% if request.path == url_for('admin_employees') %}active{% endif %}">Employees</a>
-                            <a href="{{ url_for('attendance') }}" class="nav-btn {% if request.path == url_for('attendance') %}active{% endif %}">Mark Attendance</a>
-                            <a href="{{ url_for('admin_attendance') }}" class="nav-btn {% if request.path == url_for('admin_attendance') %}active{% endif %}">Attendance List</a>
-                            <a href="{{ url_for('admin_salary') }}" class="nav-btn {% if request.path == url_for('admin_salary') %}active{% endif %}">Salary</a>
-                        {% elif session.get("role") == "staff" %}
-                            <a href="{{ url_for('staff_dashboard') }}" class="nav-btn {% if request.path == url_for('staff_dashboard') %}active{% endif %}">Staff Dashboard</a>
-                        {% endif %}
-                    </div>
+                    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+                        Menu
+                    </button>
+                    <div class="nav-content" id="primary-nav">
+                        <div class="nav-buttons">
+                            {% if session.get("role") == "admin" %}
+                                <a href="{{ url_for('admin_dashboard') }}" class="nav-btn {% if request.path == url_for('admin_dashboard') %}active{% endif %}">Dashboard</a>
+                                <a href="{{ url_for('admin_employees') }}" class="nav-btn {% if request.path == url_for('admin_employees') %}active{% endif %}">Employees</a>
+                                <a href="{{ url_for('attendance') }}" class="nav-btn {% if request.path == url_for('attendance') %}active{% endif %}">Mark Attendance</a>
+                                <a href="{{ url_for('admin_attendance') }}" class="nav-btn {% if request.path == url_for('admin_attendance') %}active{% endif %}">Attendance List</a>
+                                <a href="{{ url_for('admin_salary') }}" class="nav-btn {% if request.path == url_for('admin_salary') %}active{% endif %}">Salary</a>
+                            {% elif session.get("role") == "staff" %}
+                                <a href="{{ url_for('staff_dashboard') }}" class="nav-btn {% if request.path == url_for('staff_dashboard') %}active{% endif %}">Staff Dashboard</a>
+                            {% endif %}
+                        </div>
 
-                    <div class="user-menu">
-                        <span class="username">{{ session.get("username") }}</span>
-                        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+                        <div class="user-menu">
+                            <span class="username">{{ session.get("username") }}</span>
+                            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+                        </div>
                     </div>
                 {% endif %}
             </nav>

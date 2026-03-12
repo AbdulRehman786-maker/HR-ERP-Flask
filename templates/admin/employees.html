@@ -29,6 +29,7 @@
     </div>
 
     <div class="card">
+        <div class="table-wrapper">
         <table class="table">
             <thead>
                 <tr>
@@ -47,7 +48,7 @@
                     <tr>
                         <td>{{ emp.emp_id }}</td>
                         <td>{{ emp.first_name }} {{ emp.last_name }}</td>
-                        <td><span class="dept-badge">{{ emp.department|upper }}</span></td>
+                        <td><span class="dept-badge dept-{{ emp.department|lower }}">{{ emp.department|upper }}</span></td>
                         <td><span class="role-badge role-{{ emp.role }}">{{ emp.role|capitalize }}</span></td>
                         <td>{{ emp.phone }}</td>
                         <td class="action-buttons">
@@ -65,6 +66,7 @@
                 {% endif %}
             </tbody>
         </table>
+        </div>
     </div>
 
     {% if total_pages > 1 %}

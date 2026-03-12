@@ -1,5 +1,14 @@
 // app.js - Clean version
 document.addEventListener('DOMContentLoaded', function () {
+  const navbar = document.querySelector('[data-nav]');
+  const navToggle = document.querySelector('.nav-toggle');
+
+  if (navbar && navToggle) {
+    navToggle.addEventListener('click', function () {
+      const isOpen = navbar.classList.toggle('is-open');
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+  }
   
   // Export CSV button
   const exportBtn = document.getElementById('export-csv');
