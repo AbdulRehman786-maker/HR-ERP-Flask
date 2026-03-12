@@ -31,6 +31,7 @@ After opening the link, please wait 20-40 seconds for the app to load.
 - Monthly attendance summary (employee)
 - Salary management (monthly view, net calculation, paid/unpaid tracking)
 - Admin and Staff dashboards
+- Fully responsive UI (mobile, tablet, desktop)
 
 ## Tech Stack
 - Python (Flask)
@@ -189,6 +190,7 @@ Then open your browser at: `http://127.0.0.1:5000`
 - Logo is now loaded from `static/` and favicon set is configured in the base template.
 - `.env` loader added in `config.py` to support local environment variables.
 - Navbar behavior adjusted to scroll naturally with the page (no sticky/fixed lock).
+- UI now uses a responsive layout system and reusable components for consistent styling.
 
 ## Future Improvements
 - Add CSV export for salary and attendance
