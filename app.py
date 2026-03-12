@@ -77,7 +77,7 @@ def login():
                 flash("Invalid role. Contact administrator.", "warning")
                 return redirect(url_for("login"))
 
-        flash("Invalid username or password", "danger")
+        flash("Invalid username or password.", "danger")
         return redirect(url_for("login"))
 
     return render_template("auth/login.html")
