@@ -57,7 +57,6 @@ def admin_required(f):
 
 # ---------- Authentication Routes ----------
 @app.route("/login", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
 @csrf.exempt
 def login():
     if request.method == "POST":
@@ -106,7 +105,6 @@ def login():
     return render_template("auth/login.html")
 
 @app.route("/register", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
 @csrf.exempt
 def register():
     if request.method == "POST":
