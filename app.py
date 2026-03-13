@@ -621,7 +621,7 @@ def admin_salary():
     cursor.execute(
         f"""
         SELECT
-            COUNT(*) AS rows,
+            COUNT(*) AS total_rows,
             SUM(CASE WHEN s.paid_status = 'paid' THEN 1 ELSE 0 END) AS paid,
             SUM(CASE WHEN s.paid_status != 'paid' THEN 1 ELSE 0 END) AS unpaid,
             COALESCE(SUM(s.base_salary), 0) AS base,
@@ -632,7 +632,7 @@ def admin_salary():
         tuple(params),
     )
     agg = cursor.fetchone()
-    total_records = int(agg.get("rows") or 0)
+    total_records = int(agg.get("total_rows") or 0)
     total_pages = (total_records + limit - 1) // limit
 
     salary_query = f"""
