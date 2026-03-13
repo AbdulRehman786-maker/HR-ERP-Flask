@@ -8,12 +8,13 @@ The project supports MySQL for local development and PostgreSQL for production d
 Mini ERP is a simple HR management system with authentication, employee records, attendance tracking, and salary management.  
 It is designed to be easy to run locally while remaining production-ready with environment-based configuration.
 
-## Live Demo (No Installation)
+## Live Demo (Render)
 Open directly in browser:
 - **[https://hr-erp-flask.onrender.com/login](https://hr-erp-flask.onrender.com/login)**
 After opening the link, please wait 20-40 seconds for the app to load.
+Note: The demo uses its own database. Local credentials do not apply to the live demo unless you update the Render DB.
 
-## Test Credentials
+## Test Credentials (Local)
 **Admin Login**
 - username: admin
 - password: admin123
