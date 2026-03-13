@@ -128,6 +128,11 @@ def register():
             cursor.close()
             conn.close()
             return redirect(url_for("register"))
+        if (employee.get("role") or "").lower() == "admin":
+            flash("Admin accounts cannot be created via registration.", "warning")
+            cursor.close()
+            conn.close()
+            return redirect(url_for("register"))
 
         # Check emp_id already has account
         cursor.execute("SELECT user_id FROM users WHERE emp_id = %s", (emp_id,))

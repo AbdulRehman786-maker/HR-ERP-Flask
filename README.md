@@ -123,6 +123,7 @@ SECRET_KEY=your-strong-secret
 - `SECRET_KEY` must be set for production.
 - For Render, use the **DATABASE_URL** provided by Render.
 - Keep `DB_ENGINE=mysql` for local MySQL development.
+- Registration is limited to active staff employees; admin accounts must be created by an admin.
 
 ## Database Setup
 The SQL file `mineerp.sql` contains the schema and seed data.
