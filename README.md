@@ -1,108 +1,142 @@
-# Mini ERP (Flask)
+# HR ERP Flask
 
-A lightweight HR/ERP web application built with Flask.  
-It provides role-based access for Admin and Staff to manage employees, attendance, and salaries.  
-The project supports MySQL for local development and PostgreSQL for production deployments (e.g., Render).
+Flask-based HR and employee management system with role-based access, attendance tracking, salary management, and Render-ready deployment support.
 
-## Description
-Mini ERP is a simple HR management system with authentication, employee records, attendance tracking, and salary management.  
-It is designed to be easy to run locally while remaining production-ready with environment-based configuration.
+![Flask](https://img.shields.io/badge/Backend-Flask-blue)
+![Database](https://img.shields.io/badge/Database-MySQL%20%2F%20PostgreSQL-lightgrey)
+![Security](https://img.shields.io/badge/Security-CSRF%20%2B%20Rate%20Limiting-green)
+![Deploy](https://img.shields.io/badge/Deploy-Render-46E3B7)
+![License](https://img.shields.io/badge/License-MIT-brightgreen)
 
-## Live Demo (Render)
-Open directly in browser:
-- **[https://hr-erp-flask.onrender.com/login](https://hr-erp-flask.onrender.com/login)**
-After opening the link, please wait 20-40 seconds for the app to load.
-Note: The demo uses its own database. Local credentials do not apply to the live demo unless you update the Render DB.
+## Table of Contents
 
-## Test Credentials (Local)
-**Admin Login**
-- username: admin
-- password: admin123
+- [Portfolio Summary](#portfolio-summary)
+- [Live Demo](#live-demo)
+- [Features](#features)
+- [Role Access](#role-access)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Database Setup](#database-setup)
+- [Render Deployment](#render-deployment)
+- [Usage](#usage)
+- [Tests](#tests)
+- [Screenshots](#screenshots)
+- [Recent Improvements](#recent-improvements)
+- [Future Improvements](#future-improvements)
+- [Contact](#contact)
+- [License](#license)
 
-**Staff Login**
-- username: employee
-- password: employee123
+## Portfolio Summary
+
+HR ERP Flask is a lightweight but practical HR and operations management system built for small teams and internal business workflows. It focuses on employee records, attendance, salary tracking, role-based access, and production-ready deployment support through environment-based configuration.
+
+## Live Demo
+
+### Open Live App
+
+```text
+https://hr-erp-flask.onrender.com/login
+```
+
+- Best way to open it: copy the URL and open it in a new tab manually
+- Free Render note: after opening the link, wait around `20 to 40 seconds` if the service is waking up from inactivity
+- Demo note: the live app uses its own hosted database, so local database changes do not automatically appear there
+
+### Demo Credentials
+
+- Admin
+  - Username: `admin`
+  - Password: `admin123`
+- Staff
+  - Username: `employee`
+  - Password: `employee123`
 
 ## Features
-- User authentication (login, register, logout)
-- Role-based access control (Admin, Staff)
-- Employee management (CRUD, search, filters, pagination)
-- Attendance system (check-in, check-out, absent)
-- Daily attendance overview (admin)
-- Monthly attendance summary (employee)
-- Salary management (monthly view, net calculation, paid/unpaid tracking)
-- Admin and Staff dashboards
-- Fully responsive UI (mobile, tablet, desktop)
-- Server-side pagination, filtering, and sorting for attendance and salary
-- CSRF protection and login rate limiting
+
+- Login, logout, and protected role-based access
+- Admin and staff dashboards
+- Employee management with CRUD operations
+- Attendance check-in, check-out, and absent tracking
+- Daily attendance overview for admin users
+- Monthly attendance summary for staff users
+- Salary tracking with paid and unpaid status
+- Search, filtering, and pagination
+- CSRF protection with Flask-WTF
+- Login rate limiting with Flask-Limiter
+- MySQL support for local development
+- PostgreSQL support for production deployment
+
+## Role Access
+
+- `Admin` can manage employees, attendance records, salaries, and staff registration.
+- `Staff` can access their own dashboard, attendance features, and assigned workflow views.
 
 ## Tech Stack
-- Python (Flask)
-- MySQL (PyMySQL) / PostgreSQL (psycopg2)
-- Werkzeug (password hashing)
-- Flask-WTF (CSRF protection)
-- Flask-Limiter (rate limiting)
-- HTML/CSS (Jinja templates)
+
+- Flask
+- Jinja2 templates
+- MySQL via `PyMySQL`
+- PostgreSQL via `psycopg2-binary`
+- Flask-WTF
+- Flask-Limiter
+- Gunicorn
+- HTML, CSS, JavaScript
 
 ## Project Structure
-```
-C:.
-|   .env
-|   .gitignore
-|   app.py
-|   config.example.py
-|   config.py
-|   db.py
-|   mineerp.sql
-|   requirements.txt
-|   Procfile
-|
-|---static
-|   |---css
-|   |       style.css
-|   |
-|   |---js
-|           app.js
-|
-|---templates
-|   |   base.html
-|   |
-|   |---admin
-|   |       attendance.html
-|   |       dashboard.html
-|   |       employees.html
-|   |       employee_form.html
-|   |       salary.html
-|   |
-|   |---attendance
-|   |       attendance.html
-|   |
-|   |---auth
-|   |       login.html
-|   |       register.html
-|   |
-|   |---staff
-|           dashboard.html
+
+```text
+HR-ERP-Flask/
+|-- app.py
+|-- db.py
+|-- config.py
+|-- config.example.py
+|-- bootstrap_db.py
+|-- import_render_data.py
+|-- update_login_credentials.py
+|-- mineerp.sql
+|-- requirements.txt
+|-- Procfile
+|-- static/
+|   |-- css/
+|   |-- js/
+|   |-- images/
+|   |-- erp-logo/
+|-- templates/
+|   |-- admin/
+|   |-- attendance/
+|   |-- auth/
+|   |-- staff/
+|   |-- base.html
+|-- tests/
+|-- data/
+|-- README.md
 ```
 
 ## Installation
-### 1) Clone and create a virtual environment
+
+### 1. Create and activate a virtual environment
+
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
-### 2) Install dependencies
+### 2. Install dependencies
+
 ```powershell
 pip install -r requirements.txt
 ```
 
-## Setup / Environment Variables
-Create a `.env` file in the project root (or set variables in your shell / Render dashboard).
+## Configuration
 
-**Required (all environments):**
-```
-SECRET_KEY=replace-me
+Create a `.env` file in the project root or configure the same values in your deployment environment.
+
+### Local MySQL example
+
+```env
+SECRET_KEY=replace-with-a-strong-secret
 DB_ENGINE=mysql
 DB_HOST=localhost
 DB_PORT=3306
@@ -111,76 +145,118 @@ DB_USER=root
 DB_PASSWORD=your_password_here
 ```
 
-**Production (PostgreSQL / Render):**
-```
+### Production PostgreSQL example
+
+```env
+SECRET_KEY=replace-with-a-strong-secret
 DB_ENGINE=postgres
-DATABASE_URL=postgres://user:pass@host:5432/dbname
+DATABASE_URL=postgresql://username:password@host:5432/database_name
 DB_SSLMODE=require
-SECRET_KEY=your-strong-secret
 ```
 
-**Important Notes**
-- `SECRET_KEY` must be set for production.
-- For Render, use the **DATABASE_URL** provided by Render.
-- Keep `DB_ENGINE=mysql` for local MySQL development.
-- Registration is limited to active staff employees; admin accounts must be created by an admin.
+### Important notes
+
+- `SECRET_KEY` should always be set in production
+- keep `DB_ENGINE=mysql` for local MySQL development
+- use `DATABASE_URL` for hosted PostgreSQL environments such as Render
+- registration should remain restricted to approved or active staff users
 
 ## Database Setup
-The SQL file `mineerp.sql` contains the schema and seed data.
 
-### MySQL (Local)
-1. Create a database (example: `mini_erp`)
-2. Import schema:
+The file `mineerp.sql` contains the schema and initial seed data.
+
+### MySQL local setup
+
+1. Create a MySQL database such as `mini_erp`
+2. Import the schema:
+
 ```bash
 mysql -u root -p mini_erp < mineerp.sql
 ```
 
-### PostgreSQL (Production)
-1. Create a PostgreSQL database on Render.
-2. Use the provided `DATABASE_URL`.
-3. Import schema manually if needed (convert or use equivalent SQL).
+### PostgreSQL production setup
 
-### Bulk Import from SQL Files
-If you keep data files in your Desktop `data` folder (example: `%USERPROFILE%\Desktop\data`) as:
-- `employees.sql`
-- `attendance.sql`
-- `salaries.sql`
+1. Create a PostgreSQL database on Render or another hosted provider
+2. Set `DATABASE_URL` in the environment
+3. Import or migrate equivalent schema as needed
 
-Use this command to import all data to Render PostgreSQL and create login users:
+### Bulk import helper
+
+If your SQL data files are stored in a folder such as `%USERPROFILE%\Desktop\data`, you can import them with:
 
 ```powershell
 python import_render_data.py --db-url "<RENDER_EXTERNAL_DATABASE_URL>"
 ```
 
-If your data folder is different, pass it explicitly:
+If the folder is different:
 
 ```powershell
 python import_render_data.py --db-url "<RENDER_EXTERNAL_DATABASE_URL>" --data-dir "D:\my-data-folder"
 ```
 
 This importer also creates:
+
 - `admin` / `admin123`
 - `employee` / `employee123`
 
-### Included Datasets (In Repo)
-These SQL datasets are also included in this repository under:
+### Included datasets
+
+The repository already includes:
+
 - `data/employees.sql`
 - `data/attendance.sql`
 - `data/salaries.sql`
 
-### Update Login Passwords Quickly
+### Update login credentials quickly
+
 ```powershell
 python update_login_credentials.py --db-url "<RENDER_EXTERNAL_DATABASE_URL>" --admin-pass "<NEW_ADMIN_PASSWORD>" --staff-pass "<NEW_EMPLOYEE_PASSWORD>"
 ```
 
+## Render Deployment
+
+Recommended Render setup:
+
+- Build command:
+
+```text
+pip install -r requirements.txt
+```
+
+- Start command:
+
+```text
+gunicorn app:app
+```
+
+- Required environment variables:
+  - `SECRET_KEY`
+  - `DB_ENGINE=postgres`
+  - `DATABASE_URL`
+  - `DB_SSLMODE=require`
+
+Free Render note:
+
+- the service can sleep when idle
+- the first request may take `20 to 40 seconds`
+- use hosted PostgreSQL for production-style persistence
+
 ## Usage
-### Run locally (development)
+
+### Run locally
+
 ```powershell
 python app.py
 ```
-Then open your browser at: `http://127.0.0.1:5000`
 
-### Run with Flask CLI (optional)
+Open:
+
+```text
+http://127.0.0.1:5000
+```
+
+### Optional Flask CLI run
+
 ```powershell
 $env:FLASK_APP="app.py"
 $env:FLASK_ENV="development"
@@ -188,44 +264,62 @@ flask run
 ```
 
 ## Tests
+
 ```powershell
-pip install -r requirements.txt
 pytest -q
 ```
 
 ## Screenshots
-- Admin Dashboard  
-  ![Admin Dashboard](static/images/AdminDashboard.PNG)
-- Staff Dashboard  
-  ![Staff Dashboard](static/images/StaffDashboard.PNG)
-- Employees  
-  ![Employees](static/images/Employees.PNG)
-- Attendance List  
-  ![Attendance List](static/images/AttendanceList.PNG)
-- Mark Attendance  
-  ![Mark Attendance](static/images/MarkAttendance.PNG)
-- Salary  
-  ![Salary](static/images/Salary.PNG)
 
-## Recent Updates
-- Added active tab highlighting in the navbar for both admin and staff views.
-- Updated staff profile card and username styling for a more professional UI.
-- Logo is now loaded from `static/` and favicon set is configured in the base template.
-- `.env` loader added in `config.py` to support local environment variables.
-- Navbar behavior adjusted to scroll naturally with the page (no sticky/fixed lock).
-- UI now uses a responsive layout system and reusable components for consistent styling.
-- Added CSRF protection, login rate limiting, and server-side pagination for admin tables.
+### Admin Dashboard
+
+![Admin Dashboard](static/images/AdminDashboard.PNG)
+
+### Staff Dashboard
+
+![Staff Dashboard](static/images/StaffDashboard.PNG)
+
+### Employees
+
+![Employees](static/images/Employees.PNG)
+
+### Attendance List
+
+![Attendance List](static/images/AttendanceList.PNG)
+
+### Mark Attendance
+
+![Mark Attendance](static/images/MarkAttendance.PNG)
+
+### Salary
+
+![Salary](static/images/Salary.PNG)
+
+## Recent Improvements
+
+- Added active navbar highlighting for clearer navigation
+- Improved profile and dashboard presentation
+- Added logo and favicon support from `static/`
+- Added environment-based configuration loading
+- Improved responsive layout behavior
+- Added CSRF protection and login rate limiting
+- Added pagination, filtering, and cleaner admin tables
 
 ## Future Improvements
-- Add CSV export for salary and attendance
-- Add password reset
-- Add email notifications
-- Add audit log for admin actions
+
+- CSV export for attendance and salary
+- Password reset flow
+- Email notifications
+- Audit log for admin activity
+- More analytics and reporting widgets
 
 ## Contact
+
 For support, collaboration, or any project-related help:
+
 - Email: `sheikhghazi09@gmail.com`
 - WhatsApp: `+923212454880`
 
 ## License
+
 MIT
